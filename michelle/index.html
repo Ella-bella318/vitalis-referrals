@@ -1,0 +1,46 @@
+<!doctype html><meta name="viewport" content="width=device-width,initial-scale=1"><title>Michelle Staples Referral | Vitalis</title><style>body{margin:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial;background:linear-gradient(#071a33,#03101f);color:white;min-height:100vh}.wrap{max-width:560px;margin:auto;padding:28px 18px 50px}.brand,.eye{text-align:center;font-weight:800;letter-spacing:.18em}.brand{color:#dff9ff;margin-bottom:24px}.eye,.code{color:#42d7ef}.lead{text-align:center;color:#dff9ff;line-height:1.5}.card{background:#ffffff11;border:1px solid #ffffff26;border-radius:24px;padding:20px;margin-top:18px}.btn{display:block;width:100%;max-width:100%;box-sizing:border-box;padding:16px;border-radius:15px;text-align:center;text-decoration:none;font-weight:800;margin-top:12px;border:0;cursor:pointer}.white{background:white;color:#071a33}.cyan{background:#42d7ef;color:#02243a}.ghost{background:transparent;color:white;border:1px solid #ffffff33}.muted{color:#a9c3d5;font-size:13px;line-height:1.5}.menu{width:100%;border-radius:16px;margin-top:12px}.footer{text-align:center;color:#a9c3d5;font-size:11px;margin-top:26px}.modalbg{position:fixed;inset:0;background:#000b;display:none;align-items:center;justify-content:center;padding:18px;z-index:99}.modalbg.show{display:flex}.modal{width:min(100%,520px);background:#081d38;border:1px solid #ffffff2e;border-radius:24px;padding:22px;max-height:90vh;overflow:auto}.close{float:right;background:none;border:0;color:white;font-size:28px}.field{margin-top:14px}.field label{display:block;color:#a9c3d5;font-size:13px;margin-bottom:7px}.field input{width:100%;max-width:100%;box-sizing:border-box;padding:15px;border-radius:12px;border:1px solid #ffffff2a;background:#04162c;color:white;font-size:16px}</style>
+<main class="wrap">
+<div class="brand">VITALIS</div><div class="eye">MICHELLE STAPLES REFERRAL</div><h1 style="text-align:center">10% Off Your First Order</h1>
+<p class="lead">Michelle sent you our way. Explore the current menu or send us a pre-filled text to get started.</p>
+<section class="card"><b>REFERRED BY<br>Michelle Staples</b><a class="btn white" href="#menu">View Menu</a><a class="btn cyan" href="sms:+14237361222?body=Hey%21%20Michelle%20Staples%20sent%20me%20your%20way.%20I%E2%80%99d%20like%20to%20learn%20more%20and%20use%20my%2010%25%20off%20my%20first%20order%21%0A%0A%23MICHELLE10">Text Us + Claim 10% Off</a><p class="muted">Your message will automatically include Michelle’s referral code.</p></section>
+<section class="card" id="menu"><h2>Current Menu</h2><a href="../assets/vitalis-menu.png" target="_blank"><img class="menu" src="../assets/vitalis-menu.png"></a></section>
+<section class="card"><h2>Michelle’s Referral Code</h2><div class="code">#MICHELLE10</div></section>
+<section class="card"><h2>Referral Partner Tools</h2>
+<p class="muted">Everything you need to share your referral page.</p>
+<button class="btn cyan" onclick="shareMyPage()">Share My Page</button>
+<button class="btn white" onclick="copyMyLink()">Copy My Link</button>
+<a class="btn ghost" href="../assets/share-cards/michelle-share-card.png" target="_blank" rel="noopener">Save My Share Card</a>
+</section>
+<section class="card"><h2>Want your own referral page?</h2><p class="muted">Join the Vitalis Referral Program and receive your own personalized link, QR code and referral code.</p><button class="btn cyan" onclick="openM('apply')">Apply to Become a Partner</button><button class="btn ghost" onclick="openM('how')">How This Works</button></section>
+<div class="footer">For research purposes only. Not for human use.</div></main>
+
+<div class="modalbg" id="how"><div class="modal"><button class="close" onclick="closeM('how')">&times;</button><h2>How the Referral Program Works</h2>
+<p>You’ll receive your own personalized referral page, shareable link, QR code and referral code.</p>
+<ul><li>Share your personalized referral page with people you know.</li><li>New customers receive <b>10% off their first order</b> when they purchase through your referral.</li><li>You receive referral credit equal to <b>10% of the total qualifying sale</b> from customers you refer.</li><li>Each referral is connected to your unique code so your sales can be tracked back to you.</li></ul>
+<button class="btn cyan" onclick="closeM('how');openM('apply')">Apply to Become a Partner</button></div></div>
+
+<div class="modalbg" id="apply"><div class="modal"><button class="close" onclick="closeM('apply')">&times;</button><h2>Become a Referral Partner</h2><p>Sign up takes less than a minute.</p>
+<div class="field"><label>Your name</label><input id="nm" type="text" placeholder="Full name"></div>
+<div class="field"><label>Your phone number</label><input id="ph" type="tel" placeholder="(423) 555-1234"></div>
+<button class="btn cyan" onclick="approve()">Submit Application</button><p class="muted">Recruited by Michelle Staples</p></div></div>
+
+<div class="modalbg" id="ok"><div class="modal"><h2>You’re Approved! 🎉</h2>
+<p>Your personalized <b>referral page, link, QR code and referral code</b> will be created for you by the end of your sign-up day.</p>
+<p><b>We’ll send your personalized referral link directly to you by text.</b></p>
+<p>Tap below to send us a quick confirmation text. This gives us the correct number to send your referral link to when it’s ready.</p>
+<a id="confirm" class="btn cyan" href="#">Send My Confirmation Text</a><button class="btn ghost" onclick="closeM('ok')">Done</button></div></div>
+
+<script>
+const recruiter='Michelle Staples';
+function openM(id){document.getElementById(id).classList.add('show')}
+function closeM(id){document.getElementById(id).classList.remove('show')}
+function approve(){
+ const n=document.getElementById('nm').value.trim(), p=document.getElementById('ph').value.trim();
+ if(!n||!p){alert('Please enter your name and phone number.');return;}
+ const txt=`New Vitalis Referral Partner\nName: ${n}\nPhone: ${p}\nRecruited by: ${recruiter}\nPlease send my referral link to this number when it's ready.`;
+ document.getElementById('confirm').href='sms:+14237361807?body='+encodeURIComponent(txt);
+ closeM('apply');openM('ok');
+}
+async function shareMyPage(){const x=`Hey there! Here is a link to Michelle’s Vitalis referral page. Use this link for 10% off your first order!\n\nhttps://vitalis-referrals.netlify.app/michelle/`;if(navigator.share){try{await navigator.share({title:"Michelle Staples | Vitalis Referral",text:x})}catch(e){}}else if(navigator.clipboard){await navigator.clipboard.writeText(x);alert("Referral message and link copied!");}else{window.prompt("Copy this referral message:",x);}}
+async function copyMyLink(){const u="https://vitalis-referrals.netlify.app/michelle/";if(navigator.clipboard){await navigator.clipboard.writeText(u);alert("Your referral link has been copied!");}else{window.prompt("Copy your referral link:",u);}}
+</script>
