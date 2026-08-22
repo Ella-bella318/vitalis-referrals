@@ -1,0 +1,168 @@
+<!doctype html><meta name="viewport" content="width=device-width,initial-scale=1"><title>Vitalis Referral</title><style>body{margin:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial;background:linear-gradient(#071a33,#03101f);color:white;min-height:100vh}.wrap{max-width:560px;margin:auto;padding:28px 18px 50px}.brand,.eye{text-align:center;font-weight:800;letter-spacing:.18em}.brand{color:#dff9ff;margin-bottom:24px}.eye,.code{color:#42d7ef}.lead{text-align:center;color:#dff9ff;line-height:1.5}.card{background:#ffffff11;border:1px solid #ffffff26;border-radius:24px;padding:20px;margin-top:18px}.btn{display:block;width:100%;max-width:100%;box-sizing:border-box;padding:16px;border-radius:15px;text-align:center;text-decoration:none;font-weight:800;margin-top:12px;border:0;cursor:pointer}.white{background:white;color:#071a33}.cyan{background:#42d7ef;color:#02243a}.ghost{background:transparent;color:white;border:1px solid #ffffff33}.muted{color:#a9c3d5;font-size:13px;line-height:1.5}.menu{width:100%;border-radius:16px;margin-top:12px}.footer{text-align:center;color:#a9c3d5;font-size:11px;margin-top:26px}.modalbg{position:fixed;inset:0;background:#000b;display:none;align-items:center;justify-content:center;padding:18px;z-index:99}.modalbg.show{display:flex}.modal{width:min(100%,520px);background:#081d38;border:1px solid #ffffff2e;border-radius:24px;padding:22px;max-height:90vh;overflow:auto}.close{float:right;background:none;border:0;color:white;font-size:28px}.field{margin-top:14px}.field label{display:block;color:#a9c3d5;font-size:13px;margin-bottom:7px}.field input{width:100%;max-width:100%;box-sizing:border-box;padding:15px;border-radius:12px;border:1px solid #ffffff2a;background:#04162c;color:white;font-size:16px}.announce{margin-top:12px}.announce:first-child{margin-top:0}</style>
+<main class="wrap">
+<div class="brand">VITALIS</div>
+
+<div id="loading"><p class="lead" style="margin-top:32px">Loading your referral page…</p></div>
+
+<div id="inactiveState" style="display:none"><section class="card"><p class="lead" style="margin:0">This referral link isn’t active right now.</p></section></div>
+
+<div id="partnerContent" style="display:none">
+<div class="eye" id="eyeText"></div><h1 style="text-align:center">10% Off Your First Order</h1>
+<p class="lead" id="leadText"></p>
+<section class="card"><b>REFERRED BY<br><span id="referredByName"></span></b><a class="btn white" href="#menu">View Menu</a><a class="btn cyan" id="claimBtn">Text Us + Claim 10% Off</a><p class="muted" id="claimMuted"></p></section>
+<section class="card" id="announcementsCard" style="display:none"><h2>Announcements</h2><div id="announcementsList"></div></section>
+<section class="card" id="menu"><h2>Current Menu</h2><a href="../assets/vitalis-menu.png" target="_blank"><img class="menu" src="../assets/vitalis-menu.png"></a></section>
+<section class="card"><h2 id="codeHeader"></h2><div class="code" id="codeValue"></div></section>
+<section class="card"><h2>Referral Partner Tools</h2>
+<p class="muted">Everything you need to share your referral page.</p>
+<button class="btn cyan" onclick="shareMyPage()">Share My Page</button>
+<button class="btn white" onclick="copyMyLink()">Copy My Link</button>
+<a class="btn ghost" id="shareCardLink" target="_blank" rel="noopener">Save My Share Card</a>
+</section>
+<section class="card"><h2>Want your own referral page?</h2><p class="muted">Join the Vitalis Referral Program and receive your own personalized link, QR code and referral code.</p><button class="btn cyan" onclick="openM('apply')">Apply to Become a Partner</button><button class="btn ghost" onclick="openM('how')">How This Works</button></section>
+</div>
+
+<div class="footer">For research purposes only. Not for human use.</div></main>
+
+<div class="modalbg" id="how"><div class="modal"><button class="close" onclick="closeM('how')">&times;</button><h2>How the Referral Program Works</h2>
+<p>You’ll receive your own personalized referral page, shareable link, QR code and referral code.</p>
+<ul><li>Share your personalized referral page with people you know.</li><li>New customers receive <b>10% off their first order</b> when they purchase through your referral.</li><li>You receive referral credit equal to <b>10% of the total qualifying sale</b> from customers you refer.</li><li>Each referral is connected to your unique code so your sales can be tracked back to you.</li></ul>
+<button class="btn cyan" onclick="closeM('how');openM('apply')">Apply to Become a Partner</button></div></div>
+
+<div class="modalbg" id="apply"><div class="modal"><button class="close" onclick="closeM('apply')">&times;</button><h2>Become a Referral Partner</h2><p>Sign up takes less than a minute.</p>
+<div class="field"><label>Your name</label><input id="nm" type="text" placeholder="Full name"></div>
+<div class="field"><label>Your phone number</label><input id="ph" type="tel" placeholder="(423) 555-1234"></div>
+<button class="btn cyan" onclick="approve()">Submit Application</button><p class="muted">Recruited by <span id="recruitedByName"></span></p></div></div>
+
+<div class="modalbg" id="ok"><div class="modal"><h2>You’re Approved! 🎉</h2>
+<p>Your personalized <b>referral page, link, QR code and referral code</b> will be created for you by the end of your sign-up day.</p>
+<p><b>We’ll send your personalized referral link directly to you by text.</b></p>
+<p>Tap below to send us a quick confirmation text. This gives us the correct number to send your referral link to when it’s ready.</p>
+<a id="confirm" class="btn cyan" href="#">Send My Confirmation Text</a><button class="btn ghost" onclick="closeM('ok')">Done</button></div></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script>
+// Public-safe: only ever queries the public_referral_partners and
+// public_announcements views (never the raw tables, never affiliates).
+// The anon key below is meant to be public - RLS/grants on the Supabase
+// side are the real security boundary, not secrecy of this key.
+const SUPABASE_URL = "https://aeiibggojfeaygvqmobj.supabase.co";
+const SUPABASE_ANON_KEY = "sb_publishable_e5xPF-2fmdC-Cd4LfL_k1A_7hmaPsty";
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+let recruiter = "";
+let partnerSlug = "";
+
+function getSlug() {
+  // ?slug= is a local-testing convenience only (for opening this file
+  // directly without a Netlify _redirects rewrite in place). In
+  // production the slug always comes from the URL path, e.g. /michelle/.
+  const fromQuery = new URLSearchParams(location.search).get("slug");
+  if (fromQuery) return fromQuery;
+  return location.pathname.split("/").filter(Boolean)[0] || "";
+}
+
+function firstName(fullName) {
+  return fullName.split(" ")[0];
+}
+
+function escapeHtml(s) {
+  const div = document.createElement("div");
+  div.textContent = s;
+  return div.innerHTML;
+}
+
+function showInactive() {
+  document.getElementById("loading").style.display = "none";
+  document.getElementById("inactiveState").style.display = "block";
+}
+
+function openM(id){document.getElementById(id).classList.add('show')}
+function closeM(id){document.getElementById(id).classList.remove('show')}
+
+function approve(){
+ const n=document.getElementById('nm').value.trim(), p=document.getElementById('ph').value.trim();
+ if(!n||!p){alert('Please enter your name and phone number.');return;}
+ const txt=`New Vitalis Referral Partner\nName: ${n}\nPhone: ${p}\nRecruited by: ${recruiter}\nPlease send my referral link to this number when it's ready.`;
+ document.getElementById('confirm').href='sms:+14237361807?body='+encodeURIComponent(txt);
+ closeM('apply');openM('ok');
+}
+
+async function shareMyPage(){
+  const first = firstName(recruiter);
+  const x=`Hey there! Here is a link to ${first}’s Vitalis referral page. Use this link for 10% off your first order!\n\nhttps://vitalis-referrals.netlify.app/${partnerSlug}/`;
+  if(navigator.share){try{await navigator.share({title:`${recruiter} | Vitalis Referral`,text:x})}catch(e){}}
+  else if(navigator.clipboard){await navigator.clipboard.writeText(x);alert("Referral message and link copied!");}
+  else{window.prompt("Copy this referral message:",x);}
+}
+
+async function copyMyLink(){
+  const u=`https://vitalis-referrals.netlify.app/${partnerSlug}/`;
+  if(navigator.clipboard){await navigator.clipboard.writeText(u);alert("Your referral link has been copied!");}
+  else{window.prompt("Copy your referral link:",u);}
+}
+
+async function renderAnnouncements() {
+  const { data, error } = await sb
+    .from("public_announcements")
+    .select("*")
+    .order("is_pinned", { ascending: false })
+    .order("created_at", { ascending: false });
+
+  if (error || !data || data.length === 0) return;
+
+  const card = document.getElementById("announcementsCard");
+  const list = document.getElementById("announcementsList");
+  list.innerHTML = "";
+  data.forEach((a) => {
+    const item = document.createElement("div");
+    item.className = "announce";
+    item.innerHTML = `<b>${a.is_pinned ? "📌 " : ""}${escapeHtml(a.title)}</b><p class="muted" style="margin-top:4px">${escapeHtml(a.message)}</p>`;
+    list.appendChild(item);
+  });
+  card.style.display = "block";
+}
+
+async function init() {
+  partnerSlug = getSlug();
+  if (!partnerSlug) { showInactive(); return; }
+
+  try {
+    const { data: partner, error } = await sb
+      .from("public_referral_partners")
+      .select("*")
+      .eq("slug", partnerSlug)
+      .maybeSingle();
+
+    if (error || !partner || partner.status !== "active") {
+      showInactive();
+      return;
+    }
+
+    recruiter = partner.name;
+    const first = firstName(partner.name);
+
+    document.title = `${partner.name} Referral | Vitalis`;
+    document.getElementById("eyeText").textContent = `${partner.name.toUpperCase()} REFERRAL`;
+    document.getElementById("leadText").textContent = `${first} sent you our way. Explore the current menu or send us a pre-filled text to get started.`;
+    document.getElementById("referredByName").textContent = partner.name;
+
+    const smsBody = `Hey! ${partner.name} sent me your way. I’d like to learn more and use my 10% off my first order!\n\n#${partner.referral_code}`;
+    document.getElementById("claimBtn").href = `sms:+14237361222?body=${encodeURIComponent(smsBody)}`;
+    document.getElementById("claimMuted").textContent = `Your message will automatically include ${first}’s referral code.`;
+    document.getElementById("codeHeader").textContent = `${first}’s Referral Code`;
+    document.getElementById("codeValue").textContent = `#${partner.referral_code}`;
+    document.getElementById("shareCardLink").href = `../assets/share-cards/${partner.slug}-share-card.png`;
+    document.getElementById("recruitedByName").textContent = partner.name;
+
+    document.getElementById("loading").style.display = "none";
+    document.getElementById("partnerContent").style.display = "block";
+
+    renderAnnouncements();
+  } catch (e) {
+    showInactive();
+  }
+}
+
+init();
+</script>
