@@ -32,13 +32,16 @@
 <div class="modalbg" id="apply"><div class="modal"><button class="close" onclick="closeM('apply')">&times;</button><h2>Become a Referral Partner</h2><p>Sign up takes less than a minute.</p>
 <div class="field"><label>Your name</label><input id="nm" type="text" placeholder="Full name"></div>
 <div class="field"><label>Your phone number</label><input id="ph" type="tel" placeholder="(423) 555-1234"></div>
-<button class="btn cyan" onclick="approve()">Submit Application</button><p class="muted">Recruited by <span id="recruitedByName"></span></p></div></div>
+<p class="muted" id="applyError" style="color:#ff9d9d"></p>
+<button class="btn cyan" id="submitApplication" onclick="approve()">Submit Application</button><p class="muted">Recruited by <span id="recruitedByName"></span></p></div></div>
 
 <div class="modalbg" id="ok"><div class="modal"><h2>You’re Approved! 🎉</h2>
-<p>Your personalized <b>referral page, link, QR code and referral code</b> will be created for you by the end of your sign-up day.</p>
-<p><b>We’ll send your personalized referral link directly to you by text.</b></p>
-<p>Tap below to send us a quick confirmation text. This gives us the correct number to send your referral link to when it’s ready.</p>
-<a id="confirm" class="btn cyan" href="#">Send My Confirmation Text</a><button class="btn ghost" onclick="closeM('ok')">Done</button></div></div>
+<p>Your personalized referral page is ready right now.</p>
+<div class="field"><label>Your referral link</label><input id="newLink" type="text" readonly></div>
+<a id="openPage" class="btn white" href="#" target="_blank" rel="noopener">Open My Referral Page</a>
+<button class="btn cyan" onclick="copyNewLink()">Copy My Referral Link</button>
+<a id="confirm" class="btn ghost" href="#">Send My Confirmation Text</a>
+<button class="btn ghost" onclick="closeM('ok')">Done</button></div></div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 <script>
@@ -77,15 +80,73 @@ function showInactive() {
   document.getElementById("inactiveState").style.display = "block";
 }
 
-function openM(id){document.getElementById(id).classList.add('show')}
+let applicationKey = null;
+
+function openM(id){
+  // A fresh key per modal-open: rapid double-clicks of Submit while the
+  // modal stays open reuse this same key (and get deduped server-side),
+  // but a later, separate visit gets its own key rather than being
+  // blocked forever by one earlier attempt.
+  if (id === 'apply') applicationKey = newIdempotencyKey();
+  document.getElementById(id).classList.add('show');
+}
 function closeM(id){document.getElementById(id).classList.remove('show')}
 
-function approve(){
- const n=document.getElementById('nm').value.trim(), p=document.getElementById('ph').value.trim();
- if(!n||!p){alert('Please enter your name and phone number.');return;}
- const txt=`New Vitalis Referral Partner\nName: ${n}\nPhone: ${p}\nRecruited by: ${recruiter}\nPlease send my referral link to this number when it's ready.`;
- document.getElementById('confirm').href='sms:+14237361807?body='+encodeURIComponent(txt);
- closeM('apply');openM('ok');
+function newIdempotencyKey() {
+  if (crypto && crypto.randomUUID) return crypto.randomUUID();
+  return `${Date.now()}-${Math.random().toString(36).slice(2)}`;
+}
+
+async function approve(){
+  const nameInput = document.getElementById('nm');
+  const phoneInput = document.getElementById('ph');
+  const submitBtn = document.getElementById('submitApplication');
+  const errEl = document.getElementById('applyError');
+  const n = nameInput.value.trim(), p = phoneInput.value.trim();
+  errEl.textContent = "";
+
+  if(!n||!p){errEl.textContent='Please enter your name and phone number.';return;}
+
+  submitBtn.disabled = true;
+  submitBtn.textContent = "Submitting…";
+
+  try {
+    const res = await fetch('/.netlify/functions/apply-partner', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        name: n,
+        phone: p,
+        recruitedBySlug: partnerSlug,
+        idempotencyKey: applicationKey,
+      }),
+    });
+    const result = await res.json().catch(() => null);
+
+    if (!res.ok || !result || !result.ok) {
+      errEl.textContent = (result && result.error) || 'Something went wrong. Please try again.';
+      return;
+    }
+
+    document.getElementById('newLink').value = result.url;
+    document.getElementById('openPage').href = result.url;
+
+    const txt=`New Vitalis Referral Partner\nName: ${n}\nPhone: ${p}\nReferral Code: ${result.referralCode}\nReferral Link: ${result.url}\nRecruited by: ${recruiter}`;
+    document.getElementById('confirm').href='sms:+14237361807?body='+encodeURIComponent(txt);
+
+    closeM('apply');openM('ok');
+  } catch (e) {
+    errEl.textContent = 'Network error. Please try again.';
+  } finally {
+    submitBtn.disabled = false;
+    submitBtn.textContent = "Submit Application";
+  }
+}
+
+async function copyNewLink(){
+  const u = document.getElementById('newLink').value;
+  if(navigator.clipboard){await navigator.clipboard.writeText(u);alert("Your referral link has been copied!");}
+  else{window.prompt("Copy your referral link:",u);}
 }
 
 async function shareMyPage(){

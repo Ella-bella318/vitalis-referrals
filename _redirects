@@ -55,3 +55,20 @@
 /tiffany/*		/partner/index.html	200!
 /zac		/partner/index.html	200!
 /zac/*		/partner/index.html	200!
+
+# Netlify resolves its own internal paths (Functions, Edge Functions, etc.)
+# with platform-level priority regardless of _redirects, but this explicit
+# passthrough removes any doubt and costs nothing. Verify empirically on a
+# draft deploy before trusting the catch-all below.
+/.netlify/*	/.netlify/:splat	200
+
+# Catch-all for every future partner (Phase 3): a partner created through
+# the signup function has no physical file at all, so once Netlify has
+# confirmed no real file/path matches - which happens before any
+# _redirects rule is even consulted - this is the only thing left that
+# can match, and it always resolves to the same dynamic template. Not
+# forced: there is nothing to force it over except the explicit slugs
+# above (already forced), /assets/*, /partner/*, and / itself, all of
+# which are real files/paths and are matched before this line is ever
+# reached.
+/*		/partner/index.html	200
