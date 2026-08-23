@@ -1,0 +1,57 @@
+# Phase 2: clean URLs for known referral partners only (preview-only,
+# not yet wired for production). Each rule uses the "!" force flag so
+# it wins even though the matching static <slug>/index.html file still
+# physically exists in this deploy - the 21 static pages are
+# intentionally left in place as an instant per-slug rollback: remove
+# or comment out one pair of lines below and that slug immediately
+# falls back to serving its original static page again.
+#
+# Deliberately NOT a wildcard. Only the slugs listed here are wired -
+# any other path (typo, unknown, not-yet-onboarded partner) has no
+# matching rule and no matching file, so it falls through to Netlify's
+# normal 404 rather than ever reaching the dynamic template.
+#
+# Root (/) is untouched on purpose - out of scope for this phase.
+
+/andy		/partner/index.html	200!
+/andy/*		/partner/index.html	200!
+/casey		/partner/index.html	200!
+/casey/*		/partner/index.html	200!
+/christie		/partner/index.html	200!
+/christie/*		/partner/index.html	200!
+/connar		/partner/index.html	200!
+/connar/*		/partner/index.html	200!
+/courtney		/partner/index.html	200!
+/courtney/*		/partner/index.html	200!
+/dillon		/partner/index.html	200!
+/dillon/*		/partner/index.html	200!
+/donna		/partner/index.html	200!
+/donna/*		/partner/index.html	200!
+/dylan		/partner/index.html	200!
+/dylan/*		/partner/index.html	200!
+/ella		/partner/index.html	200!
+/ella/*		/partner/index.html	200!
+/jarrod		/partner/index.html	200!
+/jarrod/*		/partner/index.html	200!
+/jessica		/partner/index.html	200!
+/jessica/*		/partner/index.html	200!
+/josh		/partner/index.html	200!
+/josh/*		/partner/index.html	200!
+/julia		/partner/index.html	200!
+/julia/*		/partner/index.html	200!
+/kady		/partner/index.html	200!
+/kady/*		/partner/index.html	200!
+/kristi		/partner/index.html	200!
+/kristi/*		/partner/index.html	200!
+/latosha		/partner/index.html	200!
+/latosha/*		/partner/index.html	200!
+/megan		/partner/index.html	200!
+/megan/*		/partner/index.html	200!
+/michelle		/partner/index.html	200!
+/michelle/*		/partner/index.html	200!
+/randy		/partner/index.html	200!
+/randy/*		/partner/index.html	200!
+/tiffany		/partner/index.html	200!
+/tiffany/*		/partner/index.html	200!
+/zac		/partner/index.html	200!
+/zac/*		/partner/index.html	200!
