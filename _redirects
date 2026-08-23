@@ -56,11 +56,13 @@
 /zac		/partner/index.html	200!
 /zac/*		/partner/index.html	200!
 
-# Netlify resolves its own internal paths (Functions, Edge Functions, etc.)
-# with platform-level priority regardless of _redirects, but this explicit
-# passthrough removes any doubt and costs nothing. Verify empirically on a
-# draft deploy before trusting the catch-all below.
-/.netlify/*	/.netlify/:splat	200
+# Netlify's own internal paths (/.netlify/functions/*, etc.) are reserved
+# at the platform level - Netlify won't even accept a _redirects rule
+# whose "from" pattern starts with /.netlify (confirmed: it rejects that
+# syntax outright at deploy time), and empirically, requests to the
+# signup function below still reach the function's own code and logic
+# with the catch-all rule in place. No passthrough rule is needed or
+# possible here.
 
 # Catch-all for every future partner (Phase 3): a partner created through
 # the signup function has no physical file at all, so once Netlify has
