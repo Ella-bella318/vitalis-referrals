@@ -215,7 +215,7 @@ async function init() {
     document.getElementById("referredByName").textContent = partner.name;
 
     const smsBody = `Hey! ${partner.name} sent me your way. I’d like to learn more and use my 10% off my first order!\n\n#${partner.referral_code}`;
-    document.getElementById("claimBtn").href = `sms:+14237361222?body=${encodeURIComponent(smsBody)}`;
+    document.getElementById("claimBtn").href = `sms:+14237361807?body=${encodeURIComponent(smsBody)}`;
     document.getElementById("claimMuted").textContent = `Your message will automatically include ${first}’s referral code.`;
     document.getElementById("codeHeader").textContent = `${first}’s Referral Code`;
     document.getElementById("codeValue").textContent = `#${partner.referral_code}`;
